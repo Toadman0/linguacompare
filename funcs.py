@@ -125,9 +125,9 @@ def get_transcription(word, lang_tr):
             return '—'
 
 
-def result():
-    print(f'{lang_1}: {original} [{get_transcription(original, lang_1)}]')
-    if get_translated_word(original) == 'your word is not in dictionary':
-        print(get_translated_word(original))
-    else:
-        print(*get_translated_word(original), sep='\n')
+print(*get_definition(), sep='\n')
+print(f'{lang_1}: {original} [{get_transcription(original, lang_1)}]')
+if get_translated_word(original) == 'your word is not in dictionary':
+    print(get_translated_word(original))
+else:
+    print(*get_translated_word(original), sep='\n')

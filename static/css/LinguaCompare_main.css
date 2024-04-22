@@ -14,9 +14,20 @@
 
 .u-section-1 .u-form-1 {
   height: 76px;
-  margin: 15px 292px 60px 0;
+  margin: 100px 320px 60px 0;
 }
 
+.u-section-1 .u-form-2 {
+  height: 250px;
+  margin: 300px 320px 60px 0;
+}
+
+
+.u-section-1 .u-text-3 {
+  font-family: Marmelad;
+  width: 80px;
+  margin: 500px auto 0;
+}
 .u-section-1 .u-input-1 {
   --radius: 50px;
   box-shadow: 5px 5px 20px 0 rgba(0,0,0,0.4);
@@ -30,6 +41,17 @@
   box-shadow: 5px 5px 20px 0 rgba(0,0,0,0.4);
   font-weight: 700;
   padding: 14px 33px 14px 32px;
+}
+.u-section-1 .u-text-2 {
+  font-family: Marmelad;
+  margin: 31px 91px 60px;
+}
+
+@media (max-width: 1199px) {
+  .u-section-1 .u-text-2 {
+    margin-right: 0;
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 1199px) {
@@ -144,3 +166,5 @@ a {
     justify-content: center;
 
 }
+
+
