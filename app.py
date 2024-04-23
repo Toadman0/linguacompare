@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, redirect, render_template, request, url_for
 import requests
 
 language_family = {
@@ -170,6 +170,35 @@ def main_page():
 
         return render_template('LinguaCompare_main.html', defff=' '.join(get_definition(original)),
                                origgg=orig_w, trans=' '.join(translations))
+
+@app.route('/sign_in', methods=['POST', 'GET'])
+def sign_in():
+    error = None
+    if request.method == 'GET':
+        return render_template('test.html')
+    elif request.method == 'POST':
+        # responce равен вводу пользователя
+        password = request.form['password']
+        username = request.form['username']
+        if password != 'a' or username != 'a':
+            error = u'error'
+        else:
+            flash(u'sakses')
+            return redirect(url_for(''))
+        print(password, username)
+    return render_template('test.html', error=error)
+
+
+
+@app.route('/sign_up', methods=['POST', 'GET'])
+def sign_up():
+    if request.method == 'GET':
+        return render_template('sign_up.html')
+    elif request.method == 'POST':
+        # responce равен вводу пользователя
+        password = request.form['password']
+        username = request.form['username']
+        print(password, username)
 
 
 if __name__ == '__main__':
