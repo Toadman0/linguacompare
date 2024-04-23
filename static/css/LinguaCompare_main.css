@@ -137,8 +137,7 @@ select::-ms-expand {
 
 /* Other styles*/
 body {
-  color: #fff;
-  background: var(--background-gradient);
+  background-color: #d4d0ff;
 }
 
 a {

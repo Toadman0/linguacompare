@@ -150,7 +150,7 @@ def get_transcription(original, word, lang_tr, family, lang_1='en'):
 app = Flask(__name__)
 
 
-@app.route('/Welcome_to_LinguaCompare', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def main_page():
     if request.method == 'GET':
         return render_template('LinguaCompare_main.html')
@@ -168,7 +168,8 @@ def main_page():
         else:
             translations = get_translated_word(original, family, lang_1)
 
-        return render_template('LinguaCompare_main.html', defff=get_definition(original), origgg=orig_w, trans=translations)
+        return render_template('LinguaCompare_main.html', defff=' '.join(get_definition(original)),
+                               origgg=orig_w, trans=' '.join(translations))
 
 
 if __name__ == '__main__':
