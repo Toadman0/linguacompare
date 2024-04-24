@@ -3,8 +3,10 @@
 }
 
 .sign_in {
-  top: 10%;
-  left: 80%;
+  position: absolute;
+  color: #ffffff;
+  top: 30%;
+  left: 90%;
 }
 
 .u-section-1 .u-sheet-1 {

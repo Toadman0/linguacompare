@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, session
 import requests
 
 language_family = {
@@ -148,12 +148,17 @@ def get_transcription(original, word, lang_tr, family, lang_1='en'):
 
 
 app = Flask(__name__)
+app.secret_key = b'_6#y2L"F4Q8z\n\xec]/'
 
-
+@app.route('/index', methods=['POST', 'GET'])
 @app.route('/', methods=['POST', 'GET'])
 def main_page():
+    if 'username' in session:
+        username = session['username']
+    else:
+        username = False
     if request.method == 'GET':
-        return render_template('LinguaCompare_main.html')
+        return render_template('LinguaCompare_main.html', username=username)
     elif request.method == 'POST':
         # responce равен вводу пользователя
         responce = request.form['text']
@@ -168,37 +173,41 @@ def main_page():
         else:
             translations = get_translated_word(original, family, lang_1)
 
-        return render_template('LinguaCompare_main.html', defff=' '.join(get_definition(original)),
+        return render_template('LinguaCompare_main.html', username=username, defff=' '.join(get_definition(original)),
                                origgg=orig_w, trans=' '.join(translations))
 
 @app.route('/sign_in', methods=['POST', 'GET'])
 def sign_in():
     error = None
     if request.method == 'GET':
-        return render_template('test.html')
+        return render_template('sign_in.html', error='')
     elif request.method == 'POST':
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
         if password != 'a' or username != 'a':
-            error = u'error'
+            return render_template('sign_in.html', error='error')
         else:
-            flash(u'sakses')
-            return redirect(url_for(''))
-        print(password, username)
-    return render_template('test.html', error=error)
+            session['username'] = username
+            return redirect(url_for('main_page'))
 
 
 
 @app.route('/sign_up', methods=['POST', 'GET'])
 def sign_up():
     if request.method == 'GET':
-        return render_template('sign_up.html')
+        return render_template('sign_up.html', error='')
     elif request.method == 'POST':
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
         print(password, username)
+
+@app.route('/log_out')
+def log_out():
+    print(1)
+    session.pop('username', None)
+    return redirect(url_for('main_page'))
 
 
 if __name__ == '__main__':
