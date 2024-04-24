@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for, session
 import requests
+import sqlalchemy as db
 
 language_family = {
     'Altaic':
@@ -163,6 +164,13 @@ def main_page():
         # responce равен вводу пользователя
         responce = request.form['text']
         family = request.form['family']
+        if 'username' in session:
+            print(0)
+            insertion = users.insert().values([{"word": responce, "family": family, "username": session["username"], "password": session['password']}])
+            connection.execute(insertion)
+            select_all = db.select(users)
+            select = connection.execute(select_all)
+            print(select.fetchall())
 
         lang_1 = 'en'
         original = responce
@@ -176,6 +184,7 @@ def main_page():
         return render_template('LinguaCompare_main.html', username=username, defff=' '.join(get_definition(original)),
                                origgg=orig_w, trans=' '.join(translations))
 
+
 @app.route('/sign_in', methods=['POST', 'GET'])
 def sign_in():
     error = None
@@ -185,12 +194,18 @@ def sign_in():
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
-        if password != 'a' or username != 'a':
+        select_all = db.select(users)
+        select = connection.execute(select_all)
+        print(select.fetchall())
+
+        if select.fetchall() == []:
+            print(3)
             return render_template('sign_in.html', error='error')
         else:
+            print(2)
             session['username'] = username
+            session['password'] = password
             return redirect(url_for('main_page'))
-
 
 
 @app.route('/sign_up', methods=['POST', 'GET'])
@@ -201,17 +216,33 @@ def sign_up():
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
-        print(password, username)
+        session['username'] = username
+        session['password'] = password
+        return redirect(url_for('main_page'))
+
 
 @app.route('/log_out')
 def log_out():
     print(1)
     session.pop('username', None)
+    session.pop('password', None)
     return redirect(url_for('main_page'))
 
 
-if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1', debug=True)
+engine = db.create_engine('sqlite:///users.bd', echo=False)
+connection = engine.connect()
+metadata = db.MetaData()
+users = db.Table('users', metadata,
+                 db.Column('word_id', db.Integer, primary_key=True),
+                 db.Column('word', db.Text),
+                 db.Column('family', db.Text),
+                 db.Column('username', db.Text),
+                 db.Column('password', db.Text))
+metadata.create_all(engine)
+select_all = db.select(users)
+select = connection.execute(select_all)
+print(select.fetchall())
+app.run(port=8080, host='127.0.0.1', debug=True)
 
 # if __name__ == '__main__':
 # *app.run(debug=True)D:/Milena/PycharmProjects/pythonProject_LINGUA_COMPARE
