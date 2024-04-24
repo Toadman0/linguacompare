@@ -1,6 +1,5 @@
-from flask import Flask, redirect, render_template, request, url_for, session
+from flask import Flask, flash, redirect, render_template, request, url_for
 import requests
-import sqlalchemy as db
 
 language_family = {
     'Altaic':
@@ -149,28 +148,16 @@ def get_transcription(original, word, lang_tr, family, lang_1='en'):
 
 
 app = Flask(__name__)
-app.secret_key = b'_6#y2L"F4Q8z\n\xec]/'
 
-@app.route('/index', methods=['POST', 'GET'])
+
 @app.route('/', methods=['POST', 'GET'])
 def main_page():
-    if 'username' in session:
-        username = session['username']
-    else:
-        username = False
     if request.method == 'GET':
-        return render_template('LinguaCompare_main.html', username=username)
+        return render_template('LinguaCompare_main.html')
     elif request.method == 'POST':
         # responce равен вводу пользователя
         responce = request.form['text']
         family = request.form['family']
-        if 'username' in session:
-            print(0)
-            insertion = users.insert().values([{"word": responce, "family": family, "username": session["username"], "password": session['password']}])
-            connection.execute(insertion)
-            select_all = db.select(users)
-            select = connection.execute(select_all)
-            print(select.fetchall())
 
         lang_1 = 'en'
         original = responce
@@ -181,68 +168,41 @@ def main_page():
         else:
             translations = get_translated_word(original, family, lang_1)
 
-        return render_template('LinguaCompare_main.html', username=username, defff=' '.join(get_definition(original)),
+        return render_template('LinguaCompare_main.html', defff=' '.join(get_definition(original)),
                                origgg=orig_w, trans=' '.join(translations))
-
 
 @app.route('/sign_in', methods=['POST', 'GET'])
 def sign_in():
     error = None
     if request.method == 'GET':
-        return render_template('sign_in.html', error='')
+        return render_template('test.html')
     elif request.method == 'POST':
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
-        select_all = db.select(users)
-        select = connection.execute(select_all)
-        print(select.fetchall())
-
-        if select.fetchall() == []:
-            print(3)
-            return render_template('sign_in.html', error='error')
+        if password != 'a' or username != 'a':
+            error = u'error'
         else:
-            print(2)
-            session['username'] = username
-            session['password'] = password
-            return redirect(url_for('main_page'))
+            flash(u'sakses')
+            return redirect(url_for(''))
+        print(password, username)
+    return render_template('test.html', error=error)
+
 
 
 @app.route('/sign_up', methods=['POST', 'GET'])
 def sign_up():
     if request.method == 'GET':
-        return render_template('sign_up.html', error='')
+        return render_template('sign_up.html')
     elif request.method == 'POST':
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
-        session['username'] = username
-        session['password'] = password
-        return redirect(url_for('main_page'))
+        print(password, username)
 
 
-@app.route('/log_out')
-def log_out():
-    print(1)
-    session.pop('username', None)
-    session.pop('password', None)
-    return redirect(url_for('main_page'))
-
-
-engine = db.create_engine('sqlite:///users.bd', echo=False)
-connection = engine.connect()
-metadata = db.MetaData()
-users = db.Table('users', metadata,
-                 db.Column('word_id', db.Integer, primary_key=True),
-                 db.Column('word', db.Text),
-                 db.Column('family', db.Text),
-                 db.Column('username', db.Text),
-                 db.Column('password', db.Text))
-metadata.create_all(engine)
-select_all = db.select(users)
-select = connection.execute(select_all)
-print(select.fetchall())
-app.run(port=8080, host='127.0.0.1', debug=True)
+if __name__ == '__main__':
+    app.run(port=8080, host='127.0.0.1', debug=True)
 
 # if __name__ == '__main__':
 # *app.run(debug=True)D:/Milena/PycharmProjects/pythonProject_LINGUA_COMPARE

@@ -44271,6 +44271,18 @@ a.u-link.u-text-hover-grey-90:hover {
         {
             color: #f1b5b8 !important;
         }
+        
+        
+        .u-text-custom-color-11,
+        .u-input.u-text-custom-color-11,
+        .u-input.u-text-custom-color-11[class*="u-border-"],
+        li.active > a.u-button-style.u-text-custom-color-11,
+        li.active > a.u-button-style.u-text-custom-color-11[class*="u-border-"],
+        a.u-button-style.u-text-custom-color-11,
+        a.u-button-style.u-text-custom-color-11[class*="u-border-"]
+        {
+            color: #201f67 !important;
+        }
 
         a.u-button-style.u-text-custom-color-11:hover,
         a.u-button-style.u-text-custom-color-11[class*="u-border-"]:hover,
