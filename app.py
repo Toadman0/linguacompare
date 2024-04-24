@@ -93,6 +93,7 @@ def get_definition(original):
 
 
 def get_translated_word(original, family, lang_1):
+    print(family)
     translations = []
     for group in language_family[family]:
         for lang_2 in language_family[family][group]:
@@ -156,16 +157,33 @@ app.secret_key = b'_6#y2L"F4Q8z\n\xec]/'
 
 @app.route('/', methods=['POST', 'GET'])
 def main_page():
-    if 'username' in session:
+    try:
         username = session['username']
-    else:
+        print(2)
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.username == session['username']).first()
+        if user.words:
+            history = [{'word': x.split(',')[0], 'family': x.split(',')[1]} for x in user.words.split()]
+        else:
+            history = []
+    except Exception:
+        print(1)
+        try:
+            session.pop('username')
+        except Exception:
+            pass
         username = 0
-    if request.method == 'GET':
-        return render_template('LinguaCompare_main.html', username=username)
-    elif request.method == 'POST':
+        history = 0
+    if request.method == 'GET' and 'word' not in session:
+        return render_template('LinguaCompare_main.html', username=username, history=history)
+    elif request.method == 'POST' or 'word' in session:
         # responce равен вводу пользователя
-        responce = request.form['text']
-        family = request.form['family']
+        if 'word' in session:
+            responce = session.pop('word')
+            family = session.pop('family')
+        else:
+            responce = request.form['text']
+            family = request.form['family']
 
         lang_1 = 'en'
         original = responce
@@ -178,6 +196,7 @@ def main_page():
             else:
                 user.words = f'{responce},{family}'
             db_sess.commit()
+            history = [{'word': x.split(',')[0], 'family': x.split(',')[1]} for x in user.words.split()]
 
         orig_w = f'{lang_1}: {original} [{get_transcription(original, original, lang_1, family, lang_1)}]'
         if get_translated_word(original, family, lang_1) == 'your word is not in dictionary':
@@ -186,7 +205,14 @@ def main_page():
             translations = get_translated_word(original, family, lang_1)
 
         return render_template('LinguaCompare_main.html', defff=' '.join(get_definition(original)),
-                               origgg=orig_w, trans=' '.join(translations), username=username)
+                               origgg=orig_w, trans=' '.join(translations), username=username, history=history)
+
+
+@app.route('/search/<word>/<family>')
+def search(word, family):
+    session['word'] = word
+    session['family'] = family
+    return redirect(url_for('main_page'))
 
 @app.route('/sign_in', methods=['POST', 'GET'])
 def sign_in():
@@ -205,9 +231,7 @@ def sign_in():
             session['username'] = username
             session['password'] = password
             return redirect(url_for('main_page'))
-        print(password, username)
     return render_template('sign_in.html', error=error)
-
 
 
 @app.route('/sign_up', methods=['POST', 'GET'])
@@ -218,26 +242,27 @@ def sign_up():
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
-        session['username'] = username
-        session['password'] = password
-        user = User()
-        user.username = username
-        user.password = password
+        new = User()
+        new.username = username
+        new.password = password
         db_sess = db_session.create_session()
         users = db_sess.query(User).filter(User.username == username)
-        if users.first:
+        if users.first():
             return render_template('sign_up.html', error="This username already exists")
         else:
-            db_sess.add(user)
+            session['username'] = username
+            session['password'] = password
+            db_sess.add(new)
             db_sess.commit()
-            print(password, username)
             return redirect(url_for('main_page'))
+
 
 @app.route('/log_out')
 def logout():
     session.pop('username', None)
     session.pop('password', None)
     return redirect(url_for('main_page'))
+
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1', debug=True)

@@ -39,6 +39,16 @@
       </div>
     </header>
     <section class="u-clearfix u-custom-color-1 u-section-1" id="sec-8538">
+      {% if username != 0 %}
+        <div style="left: 20%;">
+          <h5>History:</h5>
+          {% for item in history %}
+            <a href="search/{{item['word']}}/{{item['family']}}"  class=".u-section-1 .u-form-1"> {{item['word']}}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div>
+      </div>
       <div class="u-clearfix u-sheet u-sheet-1">
         <div class="u-form u-form-1">
           <search>
