@@ -156,8 +156,12 @@ app.secret_key = b'_6#y2L"F4Q8z\n\xec]/'
 
 @app.route('/', methods=['POST', 'GET'])
 def main_page():
+    if 'username' in session:
+        username = session['username']
+    else:
+        username = 0
     if request.method == 'GET':
-        return render_template('LinguaCompare_main.html')
+        return render_template('LinguaCompare_main.html', username=username)
     elif request.method == 'POST':
         # responce равен вводу пользователя
         responce = request.form['text']
@@ -165,12 +169,15 @@ def main_page():
 
         lang_1 = 'en'
         original = responce
-
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.username == session['username'])
-        print(user)
-        user.name = "Измененное имя пользователя"
-        db_sess.commit()
+        if 'username' in session:
+            username = session['username']
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.username == session['username']).first()
+            if user.words:
+                user.words = user.words + f' {responce},{family}'
+            else:
+                user.words = f'{responce},{family}'
+            db_sess.commit()
 
         orig_w = f'{lang_1}: {original} [{get_transcription(original, original, lang_1, family, lang_1)}]'
         if get_translated_word(original, family, lang_1) == 'your word is not in dictionary':
@@ -179,27 +186,27 @@ def main_page():
             translations = get_translated_word(original, family, lang_1)
 
         return render_template('LinguaCompare_main.html', defff=' '.join(get_definition(original)),
-                               origgg=orig_w, trans=' '.join(translations))
+                               origgg=orig_w, trans=' '.join(translations), username=username)
 
 @app.route('/sign_in', methods=['POST', 'GET'])
 def sign_in():
     error = None
     if request.method == 'GET':
-        return render_template('test.html')
+        return render_template('sign_in.html')
     elif request.method == 'POST':
         # responce равен вводу пользователя
         password = request.form['password']
         username = request.form['username']
         db_sess = db_session.create_session()
         users = db_sess.query(User).filter((User.username == username) & (User.password == password))
-        if not users:
-            error = u'error'
+        if not users.first():
+            error = u'try a different username or password'
         else:
             session['username'] = username
             session['password'] = password
             return redirect(url_for('main_page'))
         print(password, username)
-    return render_template('test.html', error=error)
+    return render_template('sign_in.html', error=error)
 
 
 
@@ -217,10 +224,20 @@ def sign_up():
         user.username = username
         user.password = password
         db_sess = db_session.create_session()
-        db_sess.add(user)
-        db_sess.commit()
-        print(password, username)
-        return redirect(url_for('main_page'))
+        users = db_sess.query(User).filter(User.username == username)
+        if users.first:
+            return render_template('sign_up.html', error="This username already exists")
+        else:
+            db_sess.add(user)
+            db_sess.commit()
+            print(password, username)
+            return redirect(url_for('main_page'))
+
+@app.route('/log_out')
+def logout():
+    session.pop('username', None)
+    session.pop('password', None)
+    return redirect(url_for('main_page'))
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1', debug=True)
