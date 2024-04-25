@@ -251,7 +251,7 @@ def main_page():
             history = []
 
     except Exception:
-
+# яркий пример гениального шедеврокодинга 
         print(1)
 
         try:
