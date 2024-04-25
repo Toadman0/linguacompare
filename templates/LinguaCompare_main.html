@@ -1,3 +1,15 @@
+<!--главное окно сайта-->
+<!--имеет поисковую -->
+<!--строку, кнопку для -->
+<!--регистрации или -->
+<!--аутентификации,-->
+<!--если пользователь-->
+<!--уже авторизован то-->
+<!--появляется история-->
+<!--поиска и -->
+<!--кнопка для выхода из-->
+<!--акаунта-->
+
 <!DOCTYPE html>
 <html style="font-size: 16px;" lang="ru"><head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,6 +42,17 @@
       <div class="u-clearfix u-sheet u-sheet-1">
         <img class="u-image u-image-contain u-image-default u-preserve-proportions u-image-1" src="static/img/Group331.png" alt="" data-image-width="1000" data-image-height="1000">
         <h5 class="u-section-1 u-text u-text-default u-text-1"> LinguaCompare — Etymology, Transcription and Family   Translation</h5>
+
+<!--логическая часть:-->
+<!--если в форму-->
+<!--не было введено имя-->
+<!--пользователя то появляется-->
+<!--кнопка для входа,-->
+<!--если имя пользователя-->
+<!--было передано, то -->
+<!--выводится кнопка для выхода -->
+<!--и имя пользователя-->
+
         {% if username == 0 %}
           <a href="sign_in" style="--radius: 50px; position: absolute; top: 40%; left: 90%;" class="sign_in u-btn u-btn-round u-btn-submit u-button-style u-custom-color-2 u-custom-font u-radius u-text-custom-color-11 u-btn-1">sign in</a>
         {% else %}
@@ -39,6 +62,19 @@
       </div>
     </header>
     <section class="u-clearfix u-custom-color-1 u-section-1" id="sec-8538">
+
+<!--логическая часть:-->
+<!--если в форму-->
+<!--не было введено имя-->
+<!--пользователя то история-->
+<!--поиска не видна,-->
+<!--если имя пользователя-->
+<!--было введено, то -->
+<!--в циклу фор -->
+<!--создаются ссылки-->
+<!--на все слова из истории-->
+<!--поискапользователя-->
+
       {% if username != 0 %}
         <div style="left: 20%;">
           <h5>History:</h5>

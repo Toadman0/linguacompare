@@ -6,7 +6,7 @@ import sqlalchemy.ext.declarative as dec
 SqlAlchemyBase = dec.declarative_base()
 
 __factory = None
-
+ # запуск базы данных
 
 def global_init(db_file):
     global __factory
