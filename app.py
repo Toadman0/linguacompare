@@ -3,6 +3,12 @@
 # сервер 
 # Lingua Compare
 
+# навреное
+
+# может быть
+
+# возможно
+
 from flask import Flask, flash, redirect, render_template, request, url_for, session
 from data import db_session
 from data.users import User
