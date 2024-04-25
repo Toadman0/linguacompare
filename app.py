@@ -72,6 +72,7 @@ mw_apikey = 'e4a1c6a2-09e6-4f31-9192-716b98c020b4'
 # original - слово
 # family - языковая семья
 # lang_1 - язык на котором написан слово
+# pinkfloydpompei
 
 def get_translated_word(original, family, lang_1):
     translations = []
