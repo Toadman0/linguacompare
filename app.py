@@ -258,9 +258,13 @@ def main_page():
             history = []
 
     except Exception:
+        
 # яркий пример гениального шедеврокодинга 
+        
         print(1)
 
+        # очередная попытка сделать что-то гениальное
+        # Karphagen must die
         try:
 
             session.pop('username')
@@ -368,7 +372,9 @@ def sign_in():
         else:
 
             session['username'] = username
+            
             session['password'] = password
+            
             return redirect(url_for('main_page'))
 
     return render_template('sign_in.html', error=error)
